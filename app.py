@@ -30,7 +30,7 @@ def load_data():
 st.set_page_config(
     page_title="Previsão de Partidas ATP",
     page_icon="🎾",
-    layout="centered",
+    layout="wide",
 )
 
 st.title("🎾 Previsão de Partidas ATP")
@@ -46,18 +46,30 @@ Aplicação simples para demonstrar o **deploy** do modelo de previsão de parti
 model = load_model()
 df = load_data()
 
-st.sidebar.header("Escolha uma partida de 2024")
+st.subheader("Escolha uma partida de 2024")
 
-# Criar uma lista de opções legíveis para o usuário
+# Monta as opções legíveis
 opcoes = []
 for idx, row in df.iterrows():
     label = f"{row['tourney_date'].date()} — {row['winner_name']} vs {row['loser_name']}"
     opcoes.append((label, idx))
 
 labels = [label for label, _ in opcoes]
-label_escolhida = st.sidebar.selectbox("Selecione a partida:", labels)
 
-# Recuperar o índice da linha escolhida
+# Selectbox grande na área principal, sem opção selecionada de início
+label_escolhida = st.selectbox(
+    "Comece digitando o nome de um jogador ou a data da partida:",
+    options=labels,
+    index=None,  # nada selecionado por padrão
+    placeholder="Ex.: 2024-03-20 — Novak Djokovic vs Carlos Alcaraz",
+)
+
+# Se o usuário ainda não escolheu nada, só mostra um aviso e para a execução
+if label_escolhida is None:
+    st.info("Selecione uma partida acima para ver detalhes e fazer a previsão.")
+    st.stop()
+
+# Quando tiver uma escolha, seguimos como antes
 idx_escolhido = [i for (label, i) in opcoes if label == label_escolhida][0]
 linha = df.loc[idx_escolhido]
 
