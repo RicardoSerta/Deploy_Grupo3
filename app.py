@@ -18,7 +18,7 @@ COLS_MODELO = [
 
 @st.cache_resource
 def load_model():
-    model = joblib.load("atp_model.pkl")
+    model = joblib.load("atp_model_small.pkl")
     return model
 
 @st.cache_data
